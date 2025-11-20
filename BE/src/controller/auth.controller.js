@@ -45,3 +45,24 @@ export const me = async (req, res) => {
     HTTP_STATUS.OK
   );
 };
+
+export const refresh = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return ApiResponse.error(
+        res,
+        MESSAGES.VALIDATION.REQUIRED,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+    const result = await AuthService.refresh(refreshToken);
+    return ApiResponse.success(res, result, "Token refreshed", HTTP_STATUS.OK);
+  } catch (err) {
+    return ApiResponse.error(
+      res,
+      err.message || MESSAGES.ERROR.INTERNAL,
+      HTTP_STATUS.UNAUTHORIZED
+    );
+  }
+};
