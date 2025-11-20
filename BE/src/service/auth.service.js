@@ -2,12 +2,21 @@ import jwt from "jsonwebtoken";
 import User from "../model/user.js";
 import { MESSAGES } from "../constants/messages.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+const SECRET_KEY = process.env.SECRET_KEY || "change_this_secret";
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "5m";
+const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES || "7d";
 
 class AuthService {
+  // Generate access token
+  generateToken(payload, expiresIn = JWT_EXPIRES_IN) {
+    return jwt.sign(payload, SECRET_KEY, { expiresIn });
+  }
+  // Generate refresh token
+  generateRefreshToken(payload) {
+    return jwt.sign(payload, SECRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRES });
+  }
+  //login user
   async login({ identifier, password }) {
-    // identifier can be email or username
     const user = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
@@ -17,28 +26,56 @@ class AuthService {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS);
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+    // Create tokens
+    const accessToken = this.generateToken({ id: user._id });
+    const refreshToken = this.generateRefreshToken({ id: user._id });
+
+    // (optional) save refresh token to DB
+    user.refreshToken = refreshToken;
+    await user.save();
 
     return {
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         username: user.username,
         email: user.email,
-        phone: user.phone,
         avatarImage: user.avatarImage,
       },
     };
   }
 
+  // Verify token
   verifyToken(token) {
     try {
-      return jwt.verify(token, JWT_SECRET);
+      return jwt.verify(token, SECRET_KEY);
     } catch (err) {
+      if (err.name === "TokenExpiredError") throw new Error("Token expired");
       throw new Error("Invalid token");
     }
+  }
+
+  // Refresh access token
+  async refresh(refreshToken) {
+    if (!refreshToken) throw new Error("Missing refresh token");
+
+    let payload;
+    try {
+      payload = jwt.verify(refreshToken, SECRET_KEY);
+    } catch (err) {
+      throw new Error("Invalid refresh token");
+    }
+
+    // Check refresh token exists in DB (avoid stolen token)
+    const user = await User.findById(payload.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new Error("Refresh token not recognized");
+    }
+
+    const newAccessToken = this.generateToken({ id: user._id });
+
+    return { accessToken: newAccessToken };
   }
 }
 
