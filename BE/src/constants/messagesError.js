@@ -31,6 +31,7 @@ export const MessagesError = {
     ACCOUNT_LOCKED: "Account is locked. Please contact administrator",
     LOGIN_FAILED: "Login failed",
     NO_PERMISSION: "Insufficient privileges to access this resource",
+    NOT_FRIENDS: "Users are not friends",
   },
 
   DATABASE: {

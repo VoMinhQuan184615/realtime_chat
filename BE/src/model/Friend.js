@@ -37,4 +37,11 @@ friendSchema.index({ user1: 1, user2: 1 }, { unique: true });
 
 const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
 
+// Tạo index ngay khi khởi động
+Friend.collection
+  .createIndex({ user1: 1, user2: 1 }, { unique: true })
+  .catch((err) => {
+    console.log("Index already exists or error:", err.message);
+  });
+
 export default Friend;

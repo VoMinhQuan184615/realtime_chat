@@ -2,19 +2,11 @@ import ApiResponse from "../utils/ApiResponse.js";
 import { MessagesError } from "../constants/messagesError.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 import MessageService from "../service/message.service.js";
-import Conversation from "../model/Conversation.js";
 
 export const sendDirectMessage = async (req, res) => {
   try {
     const { recipientId, content, conversationId } = req.body;
     const senderId = req.user._id;
-    if (!content || !recipientId) {
-      return ApiResponse.error(
-        res,
-        MessagesError.VALIDATION.REQUIRED,
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
     const result = await MessageService.sendDirectMessage(
       senderId,
       recipientId,
@@ -24,8 +16,8 @@ export const sendDirectMessage = async (req, res) => {
     return ApiResponse.success(
       res,
       result,
-      MessagesError.SUCCESS.MESSAGE_SENT,
-      HTTP_STATUS.OK
+      "Message sent successfully",
+      HTTP_STATUS.CREATED
     );
   } catch (error) {
     return ApiResponse.error(

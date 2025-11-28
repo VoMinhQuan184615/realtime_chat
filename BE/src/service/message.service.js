@@ -14,6 +14,7 @@ class MessageService {
       if (conversationId) {
         conversation = await Conversation.findById(conversationId);
       }
+
       if (!conversation) {
         conversation = await Conversation.create({
           type: "direct",
@@ -25,13 +26,23 @@ class MessageService {
           unreadCounts: new Map(),
         });
       }
+
       const newMessage = await Message.create({
         conversationId: conversation._id,
         senderId,
         content,
         timestamp: new Date(),
       });
+
+      // Update conversation lastMessage
+      conversation.lastMessage = {
+        messageId: newMessage._id,
+        sendBy: senderId,
+        content: content,
+      };
+      conversation.lastMessageAt = new Date();
       await conversation.save();
+
       return newMessage;
     } catch (error) {
       throw new Error(error.message || MessagesError.ERROR.INTERNAL);

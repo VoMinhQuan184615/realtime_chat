@@ -32,8 +32,8 @@ export const checkFriendship = async (req, res, next) => {
     if (!friendship) {
       return ApiResponse.error(
         res,
-        MessagesError.ERROR.FORBIDDEN,
-        HTTP_STATUS.FORBIDDEN
+        MessagesError.ERROR.NOT_FRIENDS,
+        HTTP_STATUS.NOT_FOUND
       );
     }
 
