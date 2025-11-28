@@ -1,6 +1,6 @@
 import UserService from "../service/user.service.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import { MESSAGES } from "../constants/messages.js";
+import { MessagesError } from "../constants/messagesError.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 
 export const registerUser = async (req, res) => {
@@ -9,13 +9,13 @@ export const registerUser = async (req, res) => {
     return ApiResponse.success(
       res,
       result.data,
-      MESSAGES.SUCCESS.REGISTER,
+      MessagesError.SUCCESS.REGISTER,
       HTTP_STATUS.CREATED
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }
@@ -27,13 +27,13 @@ export const getUserById = async (req, res) => {
     return ApiResponse.success(
       res,
       user,
-      MESSAGES.SUCCESS.DEFAULT,
+      MessagesError.SUCCESS.DEFAULT,
       HTTP_STATUS.OK
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }
@@ -47,13 +47,13 @@ export const getAllUsers = async (req, res) => {
     return ApiResponse.success(
       res,
       result,
-      MESSAGES.SUCCESS.DEFAULT,
+      MessagesError.SUCCESS.DEFAULT,
       HTTP_STATUS.OK
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }
@@ -65,13 +65,13 @@ export const updateUser = async (req, res) => {
     return ApiResponse.success(
       res,
       user,
-      MESSAGES.SUCCESS.UPDATED,
+      MessagesError.SUCCESS.UPDATED,
       HTTP_STATUS.OK
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }
@@ -83,13 +83,13 @@ export const deleteUser = async (req, res) => {
     return ApiResponse.success(
       res,
       null,
-      MESSAGES.SUCCESS.DELETED,
+      MessagesError.SUCCESS.DELETED,
       HTTP_STATUS.OK
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }
@@ -101,7 +101,7 @@ export const searchUsers = async (req, res) => {
     if (!query) {
       return ApiResponse.error(
         res,
-        MESSAGES.VALIDATION.REQUIRED,
+        MessagesError.VALIDATION.REQUIRED,
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -109,13 +109,13 @@ export const searchUsers = async (req, res) => {
     return ApiResponse.success(
       res,
       users,
-      MESSAGES.SUCCESS.DEFAULT,
+      MessagesError.SUCCESS.DEFAULT,
       HTTP_STATUS.OK
     );
   } catch (error) {
     return ApiResponse.error(
       res,
-      error.message || MESSAGES.ERROR.INTERNAL,
+      error.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.INTERNAL_SERVER_ERROR
     );
   }

@@ -8,12 +8,13 @@ import {
   deleteUser,
   searchUsers,
 } from "../../controller/user.controller.js";
+import { authenticate } from "../../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 // List users and search
-router.get("/", getAllUsers);
-router.get("/search", searchUsers);
+router.get("/", authenticate, getAllUsers);
+router.get("/search", authenticate, searchUsers);
 
 // Create
 router.post("/register", registerUser);
