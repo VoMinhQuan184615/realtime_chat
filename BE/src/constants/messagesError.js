@@ -1,4 +1,4 @@
-export const MESSAGES = {
+export const MessagesError = {
   SUCCESS: {
     DEFAULT: "Operation completed successfully",
     CREATED: "Resource created successfully",
@@ -31,6 +31,7 @@ export const MESSAGES = {
     ACCOUNT_LOCKED: "Account is locked. Please contact administrator",
     LOGIN_FAILED: "Login failed",
     NO_PERMISSION: "Insufficient privileges to access this resource",
+    NOT_FRIENDS: "Users are not friends",
   },
 
   DATABASE: {
@@ -48,6 +49,12 @@ export const MESSAGES = {
     MAX_LENGTH: "Maximum length exceeded",
     OUT_OF_RANGE: "Value is out of valid range",
   },
+
+  FRIEND: {
+    ALREADY_FRIENDS: "Users are already friends",
+    NOT_FRIENDS: "Users are not friends",
+    REQUEST_SENT: "Friend request sent",
+  },
 };
 
-export default MESSAGES;
+export default MessagesError;

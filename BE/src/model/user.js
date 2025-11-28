@@ -1,25 +1,28 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: String,
+    avatarImage: String,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    phone: String,
+    refreshToken: {
+      type: String,
+      default: null,
+    },
   },
-  password: String,
-  avatarImage: String,
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  phone: String,
-  refreshToken: {
-    type: String,
-    default: null,
-  },
-});
+  { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -32,4 +35,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model("User", userSchema);
+export default mongoose.models.User || mongoose.model("User", userSchema);

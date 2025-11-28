@@ -1,6 +1,6 @@
 import AuthService from "../service/auth.service.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import { MESSAGES } from "../constants/messages.js";
+import { MessagesError } from "../constants/messagesError.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 
 export const login = async (req, res) => {
@@ -9,7 +9,7 @@ export const login = async (req, res) => {
     if (!identifier || !password) {
       return ApiResponse.error(
         res,
-        MESSAGES.VALIDATION.REQUIRED,
+        MessagesError.VALIDATION.REQUIRED,
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -18,13 +18,13 @@ export const login = async (req, res) => {
     return ApiResponse.success(
       res,
       result,
-      MESSAGES.SUCCESS.LOGIN,
+      MessagesError.SUCCESS.LOGIN,
       HTTP_STATUS.OK
     );
   } catch (err) {
     return ApiResponse.error(
       res,
-      err.message || MESSAGES.ERROR.INTERNAL,
+      err.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.UNAUTHORIZED
     );
   }
@@ -35,13 +35,13 @@ export const me = async (req, res) => {
   if (!req.user)
     return ApiResponse.error(
       res,
-      MESSAGES.ERROR.UNAUTHORIZED,
+      MessagesError.ERROR.UNAUTHORIZED,
       HTTP_STATUS.UNAUTHORIZED
     );
   return ApiResponse.success(
     res,
     req.user,
-    MESSAGES.SUCCESS.DEFAULT,
+    MessagesError.SUCCESS.DEFAULT,
     HTTP_STATUS.OK
   );
 };
@@ -52,7 +52,7 @@ export const refresh = async (req, res) => {
     if (!refreshToken) {
       return ApiResponse.error(
         res,
-        MESSAGES.VALIDATION.REQUIRED,
+        MessagesError.VALIDATION.REQUIRED,
         HTTP_STATUS.BAD_REQUEST
       );
     }
@@ -61,7 +61,7 @@ export const refresh = async (req, res) => {
   } catch (err) {
     return ApiResponse.error(
       res,
-      err.message || MESSAGES.ERROR.INTERNAL,
+      err.message || MessagesError.ERROR.INTERNAL,
       HTTP_STATUS.UNAUTHORIZED
     );
   }

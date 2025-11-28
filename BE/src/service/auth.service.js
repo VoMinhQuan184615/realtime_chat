@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../model/User.js";
-import { MESSAGES } from "../constants/messages.js";
+import { MessagesError } from "../constants/messagesError.js";
 
 const SECRET_KEY = process.env.SECRET_KEY || "change_this_secret";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "5m";
@@ -21,10 +21,10 @@ class AuthService {
       $or: [{ email: identifier }, { username: identifier }],
     });
 
-    if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+    if (!user) throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS);
+    if (!isMatch) throw new Error(MessagesError.ERROR.INVALID_CREDENTIALS);
 
     // Create tokens
     const accessToken = this.generateToken({ id: user._id });

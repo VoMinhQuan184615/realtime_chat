@@ -1,5 +1,5 @@
 import User from "../model/User.js";
-import { MESSAGES } from "../constants/messages.js";
+import { MessagesError } from "../constants/messagesError.js";
 
 class UserService {
   // Register user
@@ -11,7 +11,7 @@ class UserService {
       });
 
       if (existingUser) {
-        throw new Error(MESSAGES.ERROR.EMAIL_ALREADY_EXISTS);
+        throw new Error(MessagesError.ERROR.EMAIL_ALREADY_EXISTS);
       }
 
       // Create new user
@@ -29,7 +29,7 @@ class UserService {
         },
       };
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 
@@ -38,11 +38,11 @@ class UserService {
     try {
       const user = await User.findById(userId).select("-password");
       if (!user) {
-        throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+        throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
       }
       return user;
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 
@@ -67,7 +67,7 @@ class UserService {
         },
       };
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 
@@ -83,12 +83,12 @@ class UserService {
       }).select("-password");
 
       if (!user) {
-        throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+        throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
       }
 
       return user;
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 
@@ -98,12 +98,12 @@ class UserService {
       const user = await User.findByIdAndDelete(userId);
 
       if (!user) {
-        throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+        throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
       }
 
-      return { success: true, message: MESSAGES.SUCCESS.DELETED };
+      return { success: true, message: MessagesError.SUCCESS.DELETED };
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 
@@ -119,7 +119,7 @@ class UserService {
 
       return users;
     } catch (error) {
-      throw new Error(error.message || MESSAGES.ERROR.INTERNAL);
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
 }
