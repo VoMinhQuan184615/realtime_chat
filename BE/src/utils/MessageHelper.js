@@ -3,23 +3,25 @@ export const updateConversationAfterCreateMessage = (
   message,
   senderId
 ) => {
-  // Reset seen
-  conversation.seenBy = [];
-
   // Update last message
-  conversation.lastMessageAt = {
+  conversation.lastMessage = {
     messageId: message._id,
-    senderId,
+    sendBy: senderId,
     content: message.content,
-    createdAt: message.timestamp,
   };
 
-  // Update unread count
+  conversation.lastMessageAt = message.timestamp;
+
+  // Update unread count - increment for recipients (not sender)
   conversation.participants.forEach((p) => {
     const id = p.userId.toString();
-    if (id !== senderId.toString()) {
+    const senderIdStr = senderId.toString();
+
+    if (id !== senderIdStr) {
       const current = conversation.unreadCounts.get(id) || 0;
       conversation.unreadCounts.set(id, current + 1);
     }
   });
+
+  return conversation;
 };
