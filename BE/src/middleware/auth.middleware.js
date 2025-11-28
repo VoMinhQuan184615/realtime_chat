@@ -2,7 +2,7 @@ import AuthService from "../service/auth.service.js";
 import User from "../model/User.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
-import { MESSAGES } from "../constants/messages.js";
+import { MessagesError } from "../constants/messagesError.js";
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -10,7 +10,7 @@ export const authenticate = async (req, res, next) => {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return ApiResponse.error(
         res,
-        MESSAGES.ERROR.UNAUTHORIZED,
+        MessagesError.ERROR.UNAUTHORIZED,
         HTTP_STATUS.UNAUTHORIZED
       );
     }
@@ -21,7 +21,7 @@ export const authenticate = async (req, res, next) => {
     if (!user)
       return ApiResponse.error(
         res,
-        MESSAGES.ERROR.USER_NOT_FOUND,
+        MessagesError.ERROR.USER_NOT_FOUND,
         HTTP_STATUS.UNAUTHORIZED
       );
 
@@ -30,7 +30,7 @@ export const authenticate = async (req, res, next) => {
   } catch (err) {
     return ApiResponse.error(
       res,
-      err.message || MESSAGES.ERROR.UNAUTHORIZED,
+      err.message || MessagesError.ERROR.UNAUTHORIZED,
       HTTP_STATUS.UNAUTHORIZED
     );
   }

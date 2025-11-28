@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const friendSchema = new mongoose.Schema(
   {
-    userId: {
+    user1: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    friendId: {
+    user2: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -18,18 +18,23 @@ const friendSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save hook: đảm bảo user1 luôn < user2 (sorted pair)
 friendSchema.pre("save", function (next) {
-  const a = this.userId.toString();
-  const b = this.friendId.toString();
+  const id1 = this.user1.toString();
+  const id2 = this.user2.toString();
 
-  // Nếu a > b thì hoán đổi → đảm bảo luôn friendA < friendB
-  if (a > b) {
-    const temp = this.userId;
-    this.userId = this.friendId;
-    this.friendId = temp;
+  // Chỉ swap nếu cần (khi id1 > id2 theo string comparison)
+  if (id1 > id2) {
+    const temp = this.user1;
+    this.user1 = this.user2;
+    this.user2 = temp;
   }
   next();
 });
-friendSchema.index({ userId: 1, friendId: 1 }, { unique: true });
 
-export default mongoose.model("Friend", friendSchema);
+// Unique index trên sorted pair
+friendSchema.index({ user1: 1, user2: 1 }, { unique: true });
+
+const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
+
+export default Friend;

@@ -4,17 +4,29 @@ import FriendRequestService from "./friendRequest.service.js";
 import mongoose from "mongoose";
 
 class FriendService {
+  // Helper function để lấy sorted pair
+  _getSortedPair(id1, id2) {
+    const str1 = id1.toString();
+    const str2 = id2.toString();
+    return str1 < str2 ? [id1, id2] : [id2, id1];
+  }
+
   sendRequestFriend = async (from, to, message) => {
     const fromId = from.toString();
     const toId = to.toString();
 
-    // Ensure consistent ordering (like pre-hook does)
-    const [minId, maxId] = fromId < toId ? [fromId, toId] : [toId, fromId];
+    // Validate not self
+    if (fromId === toId) {
+      throw new Error("Cannot send friend request to yourself");
+    }
+
+    // Get sorted pair
+    const [user1, user2] = this._getSortedPair(fromId, toId);
 
     // Kiểm tra đã là bạn bè chưa
     const alreadyFriends = await Friend.findOne({
-      userId: minId,
-      friendId: maxId,
+      user1,
+      user2,
     });
 
     if (alreadyFriends) {
@@ -52,6 +64,7 @@ class FriendService {
 
     const toId = to.toString();
     const request = await FriendRequest.findById(requestId);
+
     if (!request) throw new Error("Friend request not found.");
     if (request.to.toString() !== toId)
       throw new Error("You are not authorized to accept this friend request.");
@@ -60,12 +73,12 @@ class FriendService {
     if (!request.from) throw new Error("Invalid friend request - missing from");
 
     const fromId = request.from.toString();
-    const [minId, maxId] = fromId < toId ? [fromId, toId] : [toId, fromId];
+    const [user1, user2] = this._getSortedPair(fromId, toId);
 
     // Check exist BEFORE create
     const exist = await Friend.findOne({
-      userId: minId,
-      friendId: maxId,
+      user1,
+      user2,
     });
     if (exist) throw new Error("You are already friends.");
 
@@ -73,13 +86,58 @@ class FriendService {
     request.status = "accepted";
     await request.save();
 
-    // Create friend, pre-hook sẽ swap nếu cần
-    await Friend.create({ userId: fromId, friendId: toId });
+    // Create friend with sorted pair (pre-hook will ensure consistency)
+    await Friend.create({ user1, user2 });
 
-    // Optional: delete request
+    // Delete request after success
     await FriendRequestService.deleteRequest(requestId);
 
     return { message: "Friend request accepted successfully" };
+  };
+
+  getPendingRequests = async (userId) => {
+    if (!userId) throw new Error("User ID is required");
+
+    const userIdStr = userId.toString();
+    const requests = await FriendRequest.find({
+      to: userIdStr,
+      status: "pending",
+    }).populate({
+      path: "from",
+      select: "username email avatarImage phone",
+    });
+
+    return requests;
+  };
+
+  getFriends = async (userId) => {
+    if (!userId) throw new Error("User ID is required");
+
+    const userIdStr = userId.toString();
+
+    // Find all friendships where user is either user1 or user2
+    const friends = await Friend.find({
+      $or: [{ user1: userIdStr }, { user2: userIdStr }],
+    })
+      .populate({
+        path: "user1",
+        select: "username email avatarImage phone",
+      })
+      .populate({
+        path: "user2",
+        select: "username email avatarImage phone",
+      });
+
+    // Map to return the actual friend (not the user themselves)
+    const friendsList = friends.map((friendship) => {
+      const friend =
+        friendship.user1._id.toString() === userIdStr
+          ? friendship.user2
+          : friendship.user1;
+      return friend;
+    });
+
+    return friendsList;
   };
 }
 
