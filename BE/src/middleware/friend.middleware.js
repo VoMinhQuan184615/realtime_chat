@@ -33,7 +33,7 @@ export const checkFriendship = async (req, res, next) => {
       return ApiResponse.error(
         res,
         MessagesError.ERROR.NOT_FRIENDS,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.FORBIDDEN
       );
     }
 
