@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../model/User.js";
+import User from "../model/Users.js";
 import { MessagesError } from "../constants/messagesError.js";
 
 const SECRET_KEY = process.env.SECRET_KEY || "change_this_secret";

@@ -1,5 +1,5 @@
 import AuthService from "../service/auth.service.js";
-import User from "../model/User.js";
+import User from "../model/Users.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 import { MessagesError } from "../constants/messagesError.js";

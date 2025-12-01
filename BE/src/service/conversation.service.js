@@ -1,5 +1,5 @@
 import Conversation from "../model/Conversation.js";
-import User from "../model/User.js";
+import User from "../model/Users.js";
 import { MessagesError } from "../constants/messagesError.js";
 
 class ConversationService {
