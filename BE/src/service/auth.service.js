@@ -20,8 +20,7 @@ class AuthService {
     const user = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
-
-    if (!user) throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
+    if (!user) throw new Error(MessagesError.ERROR.INVALID_CREDENTIALS);
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) throw new Error(MessagesError.ERROR.INVALID_CREDENTIALS);
