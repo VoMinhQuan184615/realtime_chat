@@ -22,6 +22,14 @@ const io = new Server(httpServer, {
 
 const PORT = process.env.PORT || 3000;
 
+// CORS Middleware
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 // Middleware
 app.use(cors());
 app.use(express.json());

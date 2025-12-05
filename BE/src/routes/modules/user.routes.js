@@ -12,14 +12,14 @@ import { authenticate } from "../../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// List users and search
-router.get("/", authenticate, getAllUsers);
-router.get("/search", authenticate, searchUsers);
-
 // Create
 router.post("/register", registerUser);
 
-// Read / Update / Delete by id
+// List users and search (must come BEFORE /:id route)
+router.get("/search", authenticate, searchUsers);
+router.get("/", authenticate, getAllUsers);
+
+// Read / Update / Delete by id (parameterized routes go last)
 router.get("/:id", getUserById);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);

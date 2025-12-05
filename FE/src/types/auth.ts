@@ -18,3 +18,16 @@ export interface AuthResponse {
 export interface FormErrors {
   [key: string]: string;
 }
+
+export interface SignupCredentials {
+  username: string;
+  password: string;
+  avatarImage?: string;
+  email: string;
+  phone: string;
+  confirmPassword: string;
+}
+
+export interface SignupResponse {
+  message: string;
+}
