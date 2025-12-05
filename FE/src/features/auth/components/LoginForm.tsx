@@ -1,57 +1,43 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/auth/button";
-import { Input } from "@/components/auth/input";
-import { Label } from "@/components/auth/label";
-import { useForm } from "@/hooks/useForm";
-import { useAuthContext } from "@/context/AuthContext";
-import { VALIDATION_MESSAGES } from "@/constants";
-
-interface LoginFormValues {
-  identifier: string;
-  password: string;
-}
+import { useForm } from "react-hook-form";
+import { Button, Input, Label } from "@/components/ui";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { AUTH_VALIDATION, AUTH_ROUTES } from "@/features/auth/constants";
+import { LoginCredentials } from "@/types/auth";
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuthContext();
+  const { login, isLoading, error, isAuthenticated } = useAuth();
 
-  const validateForm = (values: LoginFormValues) => {
-    const errors: Record<string, string> = {};
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginCredentials>({
+    mode: "onBlur",
+    defaultValues: {
+      identifier: "",
+      password: "",
+    },
+  });
 
-    if (!values.identifier) {
-      errors.identifier = VALIDATION_MESSAGES.EMAIL_REQUIRED;
-    }
-    if (!values.password) {
-      errors.password = VALIDATION_MESSAGES.PASSWORD_REQUIRED;
-    } else if (values.password.length < 8) {
-      errors.password = VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH;
-    }
-
-    return errors;
+  const onSubmit = (data: LoginCredentials) => {
+    login(data);
   };
 
-  const { values, errors, handleChange, handleSubmit } =
-    useForm<LoginFormValues>({
-      initialValues: { identifier: "", password: "" },
-      validate: validateForm,
-      onSubmit: async (formValues) => {
-        try {
-          await login(formValues.identifier, formValues.password);
-          navigate("/dashboard"); // Redirect after successful login
-        } catch (err) {
-          console.error("Login failed:", err);
-        }
-      },
-    });
+  // Redirect when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   // ✅ Tạo biến kiểm tra form hợp lệ
-  const isFormValid =
-    values.identifier.trim() !== "" &&
-    values.password.trim() !== "" &&
-    Object.keys(errors).length === 0;
+  const isFormValid = isValid && !isLoading;
 
   return (
-    <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">WELLCOME BACK</h1>
         <p className="text-balance text-sm text-muted-foreground">
@@ -70,22 +56,20 @@ export function LoginForm() {
           <Label htmlFor="identifier">Email or Username</Label>
           <Input
             id="identifier"
-            name="identifier"
-            type="text"
             placeholder="Enter your email or username"
-            value={values.identifier}
-            onChange={handleChange}
             className={`border p-2 rounded bg-white text-gray-900 placeholder:text-gray-500 placeholder:font-semibold focus:outline-none focus:ring-2 ${
               errors.identifier
                 ? "border-red-500 focus:ring-red-500"
                 : "focus:ring-blue-500"
             }`}
-            required
+            {...register("identifier", {
+              required: AUTH_VALIDATION.IDENTIFIER_REQUIRED,
+            })}
           />
           {errors.identifier && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-md mt-2 flex items-center gap-2 animate-fade-in">
               <span>⚠️</span>
-              <span>{errors.identifier}</span>
+              <span>{errors.identifier.message}</span>
             </div>
           )}
         </div>
@@ -94,7 +78,7 @@ export function LoginForm() {
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
             <a
-              href="/forgot-password"
+              href={AUTH_ROUTES.FORGOT_PASSWORD}
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?
@@ -102,29 +86,28 @@ export function LoginForm() {
           </div>
           <Input
             id="password"
-            name="password"
             type="password"
             placeholder="**********"
-            value={values.password}
-            onChange={handleChange}
             className={`border p-2 rounded bg-white text-gray-900 placeholder:text-gray-500 placeholder:font-semibold focus:outline-none focus:ring-2 ${
               errors.password
                 ? "border-red-500 focus:ring-red-500"
                 : "focus:ring-blue-500"
             }`}
-            required
+            {...register("password", {
+              required: AUTH_VALIDATION.PASSWORD_REQUIRED,
+              minLength: {
+                value: 8,
+                message: AUTH_VALIDATION.PASSWORD_MIN_LENGTH,
+              },
+            })}
           />
           {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
         </div>
 
         {/* ✅ Nút Login với điều kiện isFormValid */}
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={!isFormValid || isLoading}
-        >
+        <Button type="submit" className="w-full" disabled={!isFormValid}>
           {isLoading ? "Logging in..." : "Login"}
         </Button>
 

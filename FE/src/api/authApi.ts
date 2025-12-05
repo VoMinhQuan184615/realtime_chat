@@ -1,8 +1,13 @@
-import { LoginCredentials, AuthResponse } from "@/types/auth";
-import apiClient from "./api.client";
+import apiClient from "@/api/apiClient";
+import {
+  LoginCredentials,
+  AuthResponse,
+  SignupCredentials,
+  SignupResponse,
+} from "@/types/auth";
 import { AxiosError } from "axios";
 
-export const authService = {
+export const authApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       const { data } = await apiClient.post<AuthResponse>(
@@ -15,7 +20,6 @@ export const authService = {
         success: boolean;
         message: string;
       }>;
-      // Extract error message from backend response
       const errorMessage =
         axiosError.response?.data?.message ||
         axiosError.message ||
@@ -69,5 +73,25 @@ export const authService = {
 
   async logout(): Promise<void> {
     await apiClient.post("/auth/logout");
+  },
+
+  async signup(data: SignupCredentials): Promise<SignupResponse> {
+    try {
+      const { data: response } = await apiClient.post<SignupResponse>(
+        "/auth/signup",
+        data
+      );
+      return response;
+    } catch (error) {
+      const axiosError = error as AxiosError<{
+        success: boolean;
+        message: string;
+      }>;
+      const errorMessage =
+        axiosError.response?.data?.message ||
+        axiosError.message ||
+        "Signup failed";
+      throw new Error(errorMessage);
+    }
   },
 };

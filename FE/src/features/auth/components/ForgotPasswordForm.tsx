@@ -1,6 +1,5 @@
-import { Button } from "@/components/auth/button";
-import { Input } from "@/components/auth/input";
-import { Label } from "@/components/auth/label";
+import { Button, Input, Label } from "@/components/ui";
+import { AUTH_ROUTES } from "@/features/auth/constants";
 
 export function ForgotPasswordForm() {
   return (
@@ -28,7 +27,7 @@ export function ForgotPasswordForm() {
         </Button>
         <div className="text-center text-sm">
           Remember your password?{" "}
-          <a href="/login" className="underline underline-offset-4">
+          <a href={AUTH_ROUTES.LOGIN} className="underline underline-offset-4">
             Back to login
           </a>
         </div>

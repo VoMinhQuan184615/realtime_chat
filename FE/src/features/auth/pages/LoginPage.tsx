@@ -1,7 +1,8 @@
-import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
-import loginBgImage from "@/assets/images/login-bg.svg";
+import { LoginForm } from "@/features/auth/components/LoginForm";
+import { AuthLayout } from "@/layouts";
+import loginBgImage from "@/assets/images/login-bg.svg?url";
 
-export default function ForgotPasswordPage() {
+export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex flex-col"
@@ -14,9 +15,9 @@ export default function ForgotPasswordPage() {
     >
       {/* Main Content - Form centered */}
       <div className="flex flex-1 items-center justify-center px-6 md:px-10">
-        <div className="w-full max-w-sm bg-white rounded-lg shadow-lg p-8">
-          <ForgotPasswordForm />
-        </div>
+        <AuthLayout>
+          <LoginForm />
+        </AuthLayout>
       </div>
     </div>
   );

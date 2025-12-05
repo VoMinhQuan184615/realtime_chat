@@ -1,12 +1,11 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
+import { API_CONFIG } from "@/config";
+import { getToken, removeToken } from "@/utils";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
-// Create axios instance
+// Create axios instance with config from .env
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
   headers: {
     "Content-Type": "application/json",
   },
@@ -15,7 +14,7 @@ export const apiClient: AxiosInstance = axios.create({
 // Request interceptor - add token to every request
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -40,12 +39,12 @@ apiClient.interceptors.response.use(
     // Only redirect on 401 if token exists (expired token)
     // Don't redirect on 401 from login endpoint (bad credentials)
     if (error.response?.status === 401) {
-      const token = localStorage.getItem("authToken");
+      const token = getToken();
       const isLoginEndpoint = error.config?.url?.includes("/auth/login");
 
       if (token && !isLoginEndpoint) {
         // Token expired or invalid - redirect to login
-        localStorage.removeItem("authToken");
+        removeToken();
         window.location.href = "/login";
       }
       // If no token or is login endpoint, let the component handle the error
@@ -56,7 +55,7 @@ apiClient.interceptors.response.use(
       console.error(
         "Network error - Backend không response. Kiểm tra:",
         "1. Backend chạy trên",
-        API_BASE_URL,
+        API_CONFIG.BASE_URL,
         "2. CORS headers trong backend"
       );
     }
