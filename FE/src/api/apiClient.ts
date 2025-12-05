@@ -18,6 +18,13 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log(
+      `📤 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
+      {
+        data: config.data,
+        headers: config.headers,
+      }
+    );
     return config;
   },
   (error) => {
@@ -40,7 +47,7 @@ apiClient.interceptors.response.use(
     // Don't redirect on 401 from login endpoint (bad credentials)
     if (error.response?.status === 401) {
       const token = getToken();
-      const isLoginEndpoint = error.config?.url?.includes("/auth/login");
+      const isLoginEndpoint = error.config?.url?.includes("/users/login");
 
       if (token && !isLoginEndpoint) {
         // Token expired or invalid - redirect to login
@@ -53,10 +60,19 @@ apiClient.interceptors.response.use(
     // Improve error message
     if (error.message === "Network Error") {
       console.error(
-        "Network error - Backend không response. Kiểm tra:",
-        "1. Backend chạy trên",
+        "⚠️ Network error - Backend không response. Kiểm tra:",
+        "\n1. Backend chạy trên",
         API_CONFIG.BASE_URL,
-        "2. CORS headers trong backend"
+        "\n2. CORS headers trong backend (thêm cors middleware)"
+      );
+    }
+
+    // CORS error detection
+    if (error.code === "ERR_NETWORK" || error.message.includes("CORS")) {
+      console.error(
+        "❌ CORS Error detected. Backend cần thêm:\n",
+        "const cors = require('cors');\n",
+        "app.use(cors({ origin: 'http://localhost:5173', credentials: true }));"
       );
     }
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button, Input, Label } from "@/components/ui";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { AUTH_VALIDATION, AUTH_ROUTES } from "@/features/auth/constants";
@@ -8,7 +9,8 @@ import { SignupCredentials } from "@/types/auth";
 
 export function SignupForm() {
   const navigate = useNavigate();
-  const { signup, isLoading, error } = useAuth();
+  const { signup, isLoading, error, successMessage, clearSignupSuccess } =
+    useAuth();
 
   const {
     register,
@@ -19,7 +21,7 @@ export function SignupForm() {
     mode: "onBlur",
     defaultValues: {
       username: "",
-      mail: "",
+      email: "",
       phone: "",
       password: "",
       confirmPassword: "",
@@ -33,6 +35,30 @@ export function SignupForm() {
     signup(data);
   };
 
+  // Show success toast and redirect
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage, {
+        description: "Redirecting to login...",
+        duration: 2000,
+      });
+      const timer = setTimeout(() => {
+        clearSignupSuccess();
+        navigate(AUTH_ROUTES.LOGIN);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, navigate, clearSignupSuccess]);
+
+  // Show error toast
+  useEffect(() => {
+    if (error) {
+      toast.error("Signup Failed", {
+        description: error,
+      });
+    }
+  }, [error]);
+
   const isFormValid = isValid && !isLoading;
 
   return (
@@ -43,12 +69,6 @@ export function SignupForm() {
           Sign up to get started with our platform
         </p>
       </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
 
       <div className="grid gap-6">
         {/* Username */}
@@ -80,17 +100,17 @@ export function SignupForm() {
 
         {/* Email */}
         <div className="grid gap-2">
-          <Label htmlFor="mail">Email</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
-            id="mail"
+            id="email"
             type="email"
             placeholder="Enter your email"
             className={`border p-2 rounded bg-white text-gray-900 placeholder:text-gray-500 placeholder:font-semibold focus:outline-none focus:ring-2 ${
-              errors.mail
+              errors.email
                 ? "border-red-500 focus:ring-red-500"
                 : "focus:ring-blue-500"
             }`}
-            {...register("mail", {
+            {...register("email", {
               required: AUTH_VALIDATION.EMAIL_REQUIRED,
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -98,10 +118,10 @@ export function SignupForm() {
               },
             })}
           />
-          {errors.mail && (
+          {errors.email && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-md mt-2 flex items-center gap-2">
               <span>⚠️</span>
-              <span>{errors.mail.message}</span>
+              <span>{errors.email.message}</span>
             </div>
           )}
         </div>

@@ -5,6 +5,7 @@ import {
   logoutRequest,
   signupRequest,
   clearError,
+  clearSuccess,
 } from "@/features/auth/redux/authSlice";
 import { LoginCredentials, SignupCredentials } from "@/types/auth";
 
@@ -18,9 +19,8 @@ export function useAppSelector<T>(selector: (state: RootState) => T) {
 
 export function useAuth() {
   const dispatch = useAppDispatch();
-  const { user, isLoading, error, isAuthenticated } = useAppSelector(
-    (state) => state.auth
-  );
+  const { user, isLoading, error, successMessage, isAuthenticated } =
+    useAppSelector((state) => state.auth);
 
   const login = (credentials: LoginCredentials) => {
     dispatch(loginRequest(credentials));
@@ -38,14 +38,20 @@ export function useAuth() {
     dispatch(clearError());
   };
 
+  const clearSignupSuccess = () => {
+    dispatch(clearSuccess());
+  };
+
   return {
     user,
     isLoading,
     error,
+    successMessage,
     isAuthenticated,
     login,
     signup,
     logout,
     clearLoginError,
+    clearSignupSuccess,
   };
 }

@@ -22,8 +22,8 @@ export interface FormErrors {
 export interface SignupCredentials {
   username: string;
   password: string;
-  avatarImage: string;
-  mail: string;
+  avatarImage?: string;
+  email: string;
   phone: string;
   confirmPassword: string;
 }

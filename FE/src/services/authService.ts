@@ -69,8 +69,6 @@ export const authService = {
   async signup(credentials: SignupCredentials): Promise<SignupResponse> {
     try {
       const response = await authApi.signup(credentials);
-      // Signup doesn't return token, just a success message
-      // User must login after signup
       return response;
     } catch (error) {
       throw error;

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button, Input, Label } from "@/components/ui";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { AUTH_VALIDATION, AUTH_ROUTES } from "@/features/auth/constants";
@@ -29,9 +30,21 @@ export function LoginForm() {
   // Redirect when authenticated
   useEffect(() => {
     if (isAuthenticated) {
+      toast.success("Login Successful", {
+        description: "Welcome back!",
+      });
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
+
+  // Show error toast
+  useEffect(() => {
+    if (error) {
+      toast.error("Login Failed", {
+        description: error,
+      });
+    }
+  }, [error]);
 
   // ✅ Tạo biến kiểm tra form hợp lệ
   const isFormValid = isValid && !isLoading;
@@ -44,12 +57,6 @@ export function LoginForm() {
           Enter your email below to login to your account
         </p>
       </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
 
       <div className="grid gap-6">
         <div className="grid gap-2">

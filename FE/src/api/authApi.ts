@@ -1,4 +1,5 @@
 import apiClient from "@/api/apiClient";
+import { API_CONFIG } from "@/config";
 import {
   LoginCredentials,
   AuthResponse,
@@ -10,12 +11,20 @@ import { AxiosError } from "axios";
 export const authApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const { data } = await apiClient.post<AuthResponse>(
-        "/auth/login",
+      console.log(
+        "🔐 Sending login request to",
+        API_CONFIG.ENDPOINTS.LOGIN,
+        "with:",
         credentials
       );
+      const { data } = await apiClient.post<AuthResponse>(
+        API_CONFIG.ENDPOINTS.LOGIN,
+        credentials
+      );
+      console.log("✅ Login success:", data);
       return data;
     } catch (error) {
+      console.error("❌ Login error:", error);
       const axiosError = error as AxiosError<{
         success: boolean;
         message: string;
@@ -31,7 +40,7 @@ export const authApi = {
   async forgotPassword(email: string): Promise<{ message: string }> {
     try {
       const { data } = await apiClient.post<{ message: string }>(
-        "/auth/forgot-password",
+        API_CONFIG.ENDPOINTS.FORGOT_PASSWORD,
         { email }
       );
       return data;
@@ -54,7 +63,7 @@ export const authApi = {
   ): Promise<{ message: string }> {
     try {
       const { data } = await apiClient.post<{ message: string }>(
-        "/auth/reset-password",
+        API_CONFIG.ENDPOINTS.RESET_PASSWORD,
         { token, newPassword }
       );
       return data;
@@ -72,17 +81,25 @@ export const authApi = {
   },
 
   async logout(): Promise<void> {
-    await apiClient.post("/auth/logout");
+    await apiClient.post(API_CONFIG.ENDPOINTS.LOGOUT);
   },
 
   async signup(data: SignupCredentials): Promise<SignupResponse> {
     try {
-      const { data: response } = await apiClient.post<SignupResponse>(
-        "/auth/signup",
+      console.log(
+        "📝 Sending signup request to",
+        API_CONFIG.ENDPOINTS.REGISTER,
+        "with:",
         data
       );
+      const { data: response } = await apiClient.post<SignupResponse>(
+        API_CONFIG.ENDPOINTS.REGISTER,
+        data
+      );
+      console.log("✅ Signup success:", response);
       return response;
     } catch (error) {
+      console.error("❌ Signup error:", error);
       const axiosError = error as AxiosError<{
         success: boolean;
         message: string;

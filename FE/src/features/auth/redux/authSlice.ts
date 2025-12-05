@@ -5,6 +5,7 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  successMessage: string | null;
   isAuthenticated: boolean;
 }
 
@@ -12,6 +13,7 @@ const initialState: AuthState = {
   user: null,
   isLoading: false,
   error: null,
+  successMessage: null,
   isAuthenticated: false,
 };
 
@@ -59,8 +61,7 @@ const authSlice = createSlice({
     signupSuccess: (state, action: PayloadAction<{ message: string }>) => {
       state.isLoading = false;
       state.error = null;
-      // Signup successful - user needs to login
-      // Message is available if needed for UI feedback
+      state.successMessage = "Account created successfully! Please log in.";
     },
     signupFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -70,6 +71,10 @@ const authSlice = createSlice({
     // Clear error
     clearError: (state) => {
       state.error = null;
+    },
+
+    clearSuccess: (state) => {
+      state.successMessage = null;
     },
 
     // Restore session
@@ -90,6 +95,7 @@ export const {
   signupSuccess,
   signupFailure,
   clearError,
+  clearSuccess,
   restoreSession,
 } = authSlice.actions;
 
