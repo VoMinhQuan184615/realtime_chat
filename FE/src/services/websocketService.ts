@@ -1,5 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { getToken } from "@/utils";
+import { getCurrentUserFromToken } from "@/lib/utils";
+import { fetchUserProfile } from "@/api/userApi";
 
 type MessageHandler = (data: any) => void;
 
@@ -20,25 +22,63 @@ class SocketService {
    */
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
+      // If already connected, resolve immediately
+      if (this.socket?.connected) {
+        resolve();
+        return;
+      }
+
+      // If already connecting, don't create new connection
+      if (this.socket && !this.socket.disconnected) {
+        // Wait for existing connection
+        this.socket.once("connect", () => resolve());
+        this.socket.once("connect_error", (err) => reject(err));
+        return;
+      }
+
       try {
         const token = getToken();
+
+        if (!token) {
+          reject(new Error("No authentication token"));
+          return;
+        }
 
         this.socket = io(this.url, {
           auth: { token },
           transports: ["websocket"],
           reconnection: true,
-          reconnectionAttempts: 10,
-          reconnectionDelay: 2000,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000,
         });
 
-        this.socket.on("connect", () => {
+        const handleConnect = async () => {
+          // Send user info when connected (non-blocking)
+          try {
+            const response = await fetchUserProfile();
+            const user = response.data;
+            if (user) {
+              this.socket?.emit("user-info", {
+                userId: user._id,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatarImage,
+              });
+            }
+          } catch (error) {
+            // Silently fail if user profile fetch fails
+          }
+
           this.startHeartbeat();
           resolve();
-        });
+        };
 
-        this.socket.on("connect_error", (err) => {
+        const handleError = (err: any) => {
           reject(err);
-        });
+        };
+
+        this.socket.once("connect", handleConnect);
+        this.socket.once("connect_error", handleError);
 
         this.socket.on("disconnect", () => {
           this.stopHeartbeat();

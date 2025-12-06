@@ -26,6 +26,6 @@ export function* initAuthSaga() {
       }
     }
   } catch (error) {
-    console.error("❌ Failed to restore session:", error);
+    // Silently fail - user will see login page
   }
 }

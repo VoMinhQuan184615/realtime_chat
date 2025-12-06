@@ -38,14 +38,21 @@ export function getCurrentUserFromToken() {
     const decoded = decodeToken(token);
     if (!decoded) return null;
 
+    // Try to get username from various possible field names
+    const username =
+      decoded.username ||
+      decoded.name ||
+      decoded.fullName ||
+      decoded.user?.username ||
+      null;
+
     return {
       id: decoded.id || decoded.userId || "unknown",
-      username: decoded.username || decoded.name || "Anonymous",
+      username: username, // Return null if not found, don't fallback to "Anonymous"
       email: decoded.email || "unknown@example.com",
       avatar: decoded.avatar,
     };
   } catch (error) {
-    console.error("Failed to get current user:", error);
     return null;
   }
 }

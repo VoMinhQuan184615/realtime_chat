@@ -122,6 +122,19 @@ class UserService {
       throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }
+
+  async getUserProfile(userId) {
+    try {
+      const user = await User.findById(userId).select("-password");
+      if (!user) {
+        throw new Error(MessagesError.ERROR.USER_NOT_FOUND);
+      }
+      return user;
+    } catch (error) {
+      console.log("Im here---------------");
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
+    }
+  }
 }
 
 export default new UserService();

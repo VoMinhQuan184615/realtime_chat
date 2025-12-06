@@ -8,6 +8,7 @@ import {
   deleteUser,
   searchUsers,
   getOnlineUsers,
+  getUserProfile,
 } from "../../controller/user.controller.js";
 import { authenticate } from "../../middleware/auth.middleware.js";
 
@@ -20,6 +21,7 @@ router.post("/register", registerUser);
 router.get("/search", authenticate, searchUsers);
 router.get("/online", getOnlineUsers);
 router.get("/", authenticate, getAllUsers);
+router.get("/profile", authenticate, getUserProfile);
 
 // Read / Update / Delete by id (parameterized routes go last)
 router.get("/:id", getUserById);

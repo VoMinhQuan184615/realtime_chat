@@ -8,5 +8,6 @@ export const API_CONFIG = {
     REGISTER: "/users/register",
     FORGOT_PASSWORD: "/auth/forgot-password",
     RESET_PASSWORD: "/auth/reset-password",
+    USER_PROFILE: "/users/profile",
   },
 } as const;

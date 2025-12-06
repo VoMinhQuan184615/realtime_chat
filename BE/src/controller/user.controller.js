@@ -138,3 +138,22 @@ export const getOnlineUsers = async (req, res) => {
     );
   }
 };
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await UserService.getUserProfile(userId);
+    return ApiResponse.success(
+      res,
+      user,
+      MessagesError.SUCCESS.DEFAULT,
+      HTTP_STATUS.OK
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};

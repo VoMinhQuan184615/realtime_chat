@@ -2,6 +2,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import { MessagesError } from "../constants/messagesError.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 import MessageService from "../service/message.service.js";
+import OnlineUsersService from "../service/onlineUsers.service.js";
 
 export const sendDirectMessage = async (req, res) => {
   try {
@@ -194,11 +195,30 @@ export const getPublicMessages = async (req, res) => {
 
 export const getOnlineCount = async (req, res) => {
   try {
-    const onlineCount = global.socketService?.getOnlineCount() || 0;
+    const onlineCount = OnlineUsersService.getOnlineCount();
     return ApiResponse.success(
       res,
       { onlineUsers: onlineCount },
       "Online users count retrieved",
+      HTTP_STATUS.OK
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+export const getOnlineUsersList = async (req, res) => {
+  try {
+    const result = OnlineUsersService.getOnlineUsersList();
+
+    return ApiResponse.success(
+      res,
+      result,
+      "Online users list retrieved",
       HTTP_STATUS.OK
     );
   } catch (error) {

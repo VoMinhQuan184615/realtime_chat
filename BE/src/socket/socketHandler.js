@@ -24,15 +24,26 @@ export const initializeSocket = (server, corsOrigin) => {
   io.on("connection", (socket) => {
     console.log(`✅ User connected: ${socket.id}`);
 
-    // ✅ Add user to online list immediately
-    onlineUsers.set(socket.id, { socketId: socket.id });
-    broadcastOnlineUsers();
+    // ✅ Add user to online list immediately (without username initially)
+    onlineUsers.set(socket.id, { socketId: socket.id, username: null });
 
-    // Store user info when client sends it
+    // Listen for user-info event from client
     socket.on("user-info", (userInfo) => {
-      onlineUsers.set(socket.id, { ...userInfo, socketId: socket.id });
+      console.log(
+        `👤 User info received from ${socket.id}:`,
+        userInfo.username,
+        userInfo.avatar
+      );
+      onlineUsers.set(socket.id, {
+        ...userInfo,
+        avatar: userInfo.avatar,
+        socketId: socket.id,
+      });
       broadcastOnlineUsers();
     });
+
+    // Broadcast initial online count
+    broadcastOnlineUsers();
 
     // ✅ Handle public messages
     socket.on("publicMessage", (data) => {
@@ -44,7 +55,7 @@ export const initializeSocket = (server, corsOrigin) => {
         senderId: {
           _id: data.senderId,
           username: data.username,
-          avatarImage: data.avatar,
+          avatar: data.avatar,
         },
         timestamp: new Date().toISOString(),
       });

@@ -1,13 +1,22 @@
 import { RouteObject } from "react-router-dom";
 import { ChatPage } from "@/features/chat";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const chatRoutes: RouteObject[] = [
   {
     path: "/chat",
-    element: <ChatPage />,
+    element: (
+      <ProtectedRoute>
+        <ChatPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/chat/:roomId",
-    element: <ChatPage />,
+    element: (
+      <ProtectedRoute>
+        <ChatPage />
+      </ProtectedRoute>
+    ),
   },
 ];

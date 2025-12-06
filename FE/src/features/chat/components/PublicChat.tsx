@@ -7,12 +7,17 @@ import { MessageBubble } from "./MessageBubble";
 import { socketService } from "@/services";
 import { getPublicMessages, getOnlineUsersCount } from "@/api/publicChatApi";
 
-export function PublicChat({ currentUserId, currentUsername }) {
+export function PublicChat({
+  currentUserId,
+  currentUsername,
+  onOnlineUsersChange,
+}) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [wsConnected, setWsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(0);
+  const [userCache, setUserCache] = useState({}); // userId -> username mapping
   const endRef = useRef(null);
 
   // ===== LOAD HISTORY + REGISTER LISTENERS =====
@@ -26,15 +31,21 @@ export function PublicChat({ currentUserId, currentUsername }) {
       setWsConnected(socketService.isConnected());
       socketService.on("publicMessage", handleIncomingMessage);
       socketService.on("online-users", (count) => {
-        if (mounted) setOnlineUsers(count);
+        if (mounted) {
+          setOnlineUsers(count);
+          onOnlineUsersChange?.(count);
+        }
       });
 
       // Request initial online count from backend
       try {
         const count = await getOnlineUsersCount();
-        if (mounted) setOnlineUsers(count);
+        if (mounted) {
+          setOnlineUsers(count);
+          onOnlineUsersChange?.(count);
+        }
       } catch (error) {
-        console.error("Failed to fetch online count:", error);
+        // Ignore error
       }
     };
 
@@ -43,7 +54,7 @@ export function PublicChat({ currentUserId, currentUsername }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [onOnlineUsersChange]);
 
   // ===== AUTOSCROLL =====
   useEffect(() => {
@@ -52,12 +63,21 @@ export function PublicChat({ currentUserId, currentUsername }) {
 
   // ===== HANDLE MESSAGE FROM SERVER =====
   const handleIncomingMessage = (data) => {
+    const senderId = data?.senderId?._id || data?.senderId || "unknown";
+    // Try to get username from cache first, then from data, then fallback
+    const username =
+      userCache[senderId] ||
+      data?.senderId?.username ||
+      data?.senderName ||
+      data?.username ||
+      "Anonymous";
+
     const msg = {
       id: data._id,
       content: data.content,
       sender: {
-        id: data?.senderId?._id,
-        username: data?.senderId?.username,
+        id: senderId,
+        username: username,
         avatar: data?.senderId?.avatarImage,
       },
       timestamp: new Date(data.timestamp),
@@ -71,24 +91,44 @@ export function PublicChat({ currentUserId, currentUsername }) {
 
       return [...prev, msg];
     });
-  };
-
-  // ===== SEND MESSAGE =====
+  }; // ===== SEND MESSAGE =====
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     setIsSending(true);
 
-    const user = getCurrentUserFromToken() || {
-      id: currentUserId,
-      username: currentUsername,
-    };
+    // Get user info from token first, then fallback to props
+    const tokenUser = getCurrentUserFromToken();
+    const userId = tokenUser?.id || currentUserId || "unknown";
+    const usernameToSend =
+      tokenUser?.username || currentUsername || "Anonymous";
+
+    // Debug log
+    if (typeof window !== "undefined") {
+      console.log("📤 PublicChat Send Message Debug:", {
+        tokenUser,
+        currentUserId,
+        currentUsername,
+        userId,
+        usernameToSend,
+      });
+    }
+
+    // Cache this user's username for future lookups
+    setUserCache((prev) => ({
+      ...prev,
+      [userId]: usernameToSend,
+    }));
 
     const messageId = `msg-${Date.now()}`;
     const tempMsg = {
       id: messageId,
       content: inputValue,
-      sender: user,
+      sender: {
+        id: userId,
+        username: usernameToSend,
+        avatar: tokenUser?.avatar,
+      },
       timestamp: new Date(),
       status: "sending",
     };
@@ -98,9 +138,9 @@ export function PublicChat({ currentUserId, currentUsername }) {
     socketService.sendMessage("publicMessage", {
       _id: messageId,
       content: inputValue,
-      senderId: user.id,
-      username: user.username,
-      avatar: user.avatar,
+      senderId: userId,
+      username: usernameToSend,
+      avatar: tokenUser?.avatar,
     });
 
     setInputValue("");
@@ -125,35 +165,6 @@ export function PublicChat({ currentUserId, currentUsername }) {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* HEADER */}
-      <div className="border-b p-4">
-        <div className="flex justify-between">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <Globe className="w-5 h-5 text-blue-500" />
-            Public Chat
-          </h2>
-
-          <div className="flex gap-3">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-green-600" />
-              {onlineUsers} online
-            </div>
-
-            <div className="flex items-center gap-1 text-sm">
-              {wsConnected ? (
-                <>
-                  <Wifi className="w-4 h-4 text-green-600" /> Connected
-                </>
-              ) : (
-                <>
-                  <WifiOff className="w-4 h-4 text-red-600" /> Offline
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* MESSAGES */}
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
         {messages.map((msg) => (

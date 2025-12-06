@@ -1,25 +1,29 @@
 import { useEffect } from "react";
 import { Provider } from "react-redux";
+import { useSelector } from "react-redux";
 import { Toaster } from "sonner";
 import { store } from "@/app/store";
 import { AppRoutes } from "@/routes";
-import { socketService } from "@/services";
+import { useSocketConnection } from "@/hooks/useSocketConnection";
 
-function App() {
-  useEffect(() => {
-    console.log("🔌 Initializing socket connection once...");
-    socketService.connect();
+function AppContent() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-    return () => {
-      console.log("🔌 Cleaning socket connection...");
-      socketService.disconnect();
-    };
-  }, []);
+  // Hook to manage socket connection
+  useSocketConnection();
 
   return (
-    <Provider store={store}>
+    <>
       <AppRoutes />
       <Toaster position="top-right" theme="light" richColors />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
     </Provider>
   );
 }
