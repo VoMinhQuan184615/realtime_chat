@@ -21,9 +21,7 @@ function* handleLogin(action: { payload: LoginCredentials }) {
     // Update Redux state
     yield put(loginSuccess(response));
 
-    // TODO: Có thể thêm side effects sau đây:
-    // - Redirect to dashboard: yield put(push("/dashboard"))
-    // - Show success notification: yield call(notificationService.success, "Login successful")
+    // Socket connection will be triggered by auth state change
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Login failed";
@@ -40,12 +38,10 @@ function* handleLogout() {
     // Update Redux state
     yield put(logoutSuccess());
 
-    // TODO: Side effects:
-    // - Redirect to login: yield put(push("/login"))
+    // Socket will be disconnected by useSocketConnection hook when auth state changes
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Logout failed";
-    console.error("Logout error:", errorMessage);
     yield put(logoutSuccess()); // Still clear state even if logout request fails
   }
 }
@@ -58,10 +54,6 @@ function* handleSignup(action: { payload: SignupCredentials }) {
 
     // Update Redux state
     yield put(signupSuccess(response));
-
-    // TODO: Side effects:
-    // - Redirect to login: yield put(push("/login"))
-    // - Show message: yield call(notificationService.success, response.message)
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Signup failed";

@@ -3,8 +3,10 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
+import http from "http";
 import connectDB from "../db.js";
 import routes from "./routes/index.js";
+import { initializeSocket } from "./socket/socketHandler.js";
 import { setupSocket } from "./socket/socketHandler.js";
 import MessageService from "./service/message.service.js";
 import ConversationService from "./service/conversation.service.js";
@@ -12,6 +14,14 @@ import ConversationService from "./service/conversation.service.js";
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const socketService = initializeSocket(
+  server,
+  process.env.CORS_ORIGIN || "http://localhost:5173"
+);
+
+// Make socketService available globally
+global.socketService = socketService;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -45,6 +55,9 @@ const startServer = async () => {
   try {
     await connectDB();
 
+    server.listen(PORT, () => {
+      console.log(`🚀 Server ready => http://localhost:${PORT}`);
+      console.log(`🔌 Socket.io ready on ws://localhost:${PORT}`);
     httpServer.listen(PORT, () => {
       console.log(`🚀 Server ready => http://localhost:${PORT}`);
       console.log(`📡 WebSocket ready => ws://localhost:${PORT}`);
