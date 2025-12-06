@@ -220,5 +220,52 @@ class MessageService {
       throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   };
+
+  // Send public message
+  sendPublicMessage = async (senderId, content) => {
+    try {
+      const message = await Message.create({
+        senderId,
+        content,
+        isPublic: true,
+        timestamp: new Date(),
+      });
+
+      const populatedMessage = await message.populate("senderId", [
+        "_id",
+        "username",
+        "email",
+        "avatarImage",
+      ]);
+
+      return populatedMessage;
+    } catch (error) {
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
+    }
+  };
+
+  // Get public messages
+  getPublicMessages = async (limit = 50, skip = 0) => {
+    try {
+      const messages = await Message.find({ isPublic: true })
+        .populate("senderId", ["_id", "username", "email", "avatarImage"])
+        .sort({ timestamp: -1 })
+        .limit(limit)
+        .skip(skip)
+        .lean();
+
+      const total = await Message.countDocuments({ isPublic: true });
+
+      return {
+        messages: messages.reverse(),
+        total,
+        limit,
+        skip,
+        hasMore: skip + limit < total,
+      };
+    } catch (error) {
+      throw new Error(error.message || MessagesError.ERROR.INTERNAL);
+    }
+  };
 }
 export default new MessageService();

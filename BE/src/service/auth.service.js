@@ -25,9 +25,15 @@ class AuthService {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) throw new Error(MessagesError.ERROR.INVALID_CREDENTIALS);
 
-    // Create tokens
-    const accessToken = this.generateToken({ id: user._id });
-    const refreshToken = this.generateRefreshToken({ id: user._id });
+    // Create tokens with id and username
+    const accessToken = this.generateToken({
+      id: user._id,
+      username: user.username,
+    });
+    const refreshToken = this.generateRefreshToken({
+      id: user._id,
+      username: user.username,
+    });
 
     // (optional) save refresh token to DB
     user.refreshToken = refreshToken;

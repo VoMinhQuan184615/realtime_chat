@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   searchUsers,
+  getOnlineUsers,
 } from "../../controller/user.controller.js";
 import { authenticate } from "../../middleware/auth.middleware.js";
 
@@ -17,6 +18,7 @@ router.post("/register", registerUser);
 
 // List users and search (must come BEFORE /:id route)
 router.get("/search", authenticate, searchUsers);
+router.get("/online", getOnlineUsers);
 router.get("/", authenticate, getAllUsers);
 
 // Read / Update / Delete by id (parameterized routes go last)

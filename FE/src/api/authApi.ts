@@ -11,17 +11,10 @@ import { AxiosError } from "axios";
 export const authApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      console.log(
-        "🔐 Sending login request to",
-        API_CONFIG.ENDPOINTS.LOGIN,
-        "with:",
-        credentials
-      );
       const { data } = await apiClient.post<AuthResponse>(
         API_CONFIG.ENDPOINTS.LOGIN,
         credentials
       );
-      console.log("✅ Login success:", data);
       return data;
     } catch (error) {
       console.error("❌ Login error:", error);
@@ -86,17 +79,10 @@ export const authApi = {
 
   async signup(data: SignupCredentials): Promise<SignupResponse> {
     try {
-      console.log(
-        "📝 Sending signup request to",
-        API_CONFIG.ENDPOINTS.REGISTER,
-        "with:",
-        data
-      );
       const { data: response } = await apiClient.post<SignupResponse>(
         API_CONFIG.ENDPOINTS.REGISTER,
         data
       );
-      console.log("✅ Signup success:", response);
       return response;
     } catch (error) {
       console.error("❌ Signup error:", error);

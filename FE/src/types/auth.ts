@@ -1,8 +1,10 @@
 export interface User {
   id: string;
   email: string;
+  username?: string;
   name?: string;
   avatar?: string;
+  avatarImage?: string;
 }
 
 export interface LoginCredentials {
@@ -11,8 +13,13 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    user: User;
+  };
 }
 
 export interface FormErrors {

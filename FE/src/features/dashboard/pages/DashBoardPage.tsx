@@ -1,5 +1,6 @@
 import { SidebarLeft } from "@/components/sidebar-left";
-import { SidebarRight } from "@/components/sidebar-right";
+import { PublicChat } from "@/features/chat/components/PublicChat";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,11 +15,20 @@ import {
 } from "@/components/ui/sidebar";
 
 export default function DashBoardPage() {
+  const { user } = useAuth();
+
+  // Mock user data for testing
+  const currentUser = user || {
+    id: "mock-user-1",
+    email: "demo@example.com",
+    name: "Demo User",
+  };
+
   return (
     <SidebarProvider>
       <SidebarLeft />
       <SidebarInset>
-        <header className="bg-background sticky top-0 flex h-14 shrink-0 items-center gap-2">
+        <header className="bg-background sticky top-0 flex h-14 shrink-0 items-center gap-2 border-b z-10">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger />
             <Separator
@@ -29,19 +39,22 @@ export default function DashBoardPage() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="line-clamp-1">
-                    Project Management & Task Tracking
+                    Public Chat
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 mx-auto h-24 w-full max-w-3xl rounded-xl" />
-          <div className="bg-muted/50 mx-auto h-[100vh] w-full max-w-3xl rounded-xl" />
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <PublicChat
+            currentUserId={currentUser.id}
+            currentUsername={currentUser.name || currentUser.email}
+          />
         </div>
       </SidebarInset>
-      <SidebarRight />
     </SidebarProvider>
   );
 }

@@ -4,7 +4,11 @@ const messageSchema = new mongoose.Schema({
   conversationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Conversation",
-    required: true,
+    index: true,
+  },
+  isPublic: {
+    type: Boolean,
+    default: false,
     index: true,
   },
   senderId: {
@@ -28,8 +32,10 @@ const messageSchema = new mongoose.Schema({
   timestamp: {
     type: Date,
     default: Date.now,
+    index: true,
   },
 });
 messageSchema.index({ conversationId: 1, timestamp: -1 });
+messageSchema.index({ isPublic: 1, timestamp: -1 });
 
 export default mongoose.model("Message", messageSchema);

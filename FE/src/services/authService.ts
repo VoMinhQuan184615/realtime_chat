@@ -14,22 +14,33 @@ export const authService = {
   /**
    * Login user
    */
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  async login(credentials: LoginCredentials) {
     try {
       const response = await authApi.login(credentials);
-      if (response.token) {
-        saveToken(response.token);
+
+      // Extract token and user from nested response structure
+      const accessToken = response.data?.accessToken;
+      const user = response.data?.user;
+
+      if (accessToken) {
+        saveToken(accessToken);
+      } else {
+        console.warn("⚠️ No token in response!");
       }
-      return response;
+
+      // Return flattened structure for Redux
+      return {
+        user: user || {},
+        token: accessToken,
+      };
     } catch (error) {
+      console.error("❌ Login error in authService:", error);
       throw error;
     }
   },
-
   /**
    * Logout user
-   */
-  async logout(): Promise<void> {
+   */ async logout(): Promise<void> {
     try {
       await authApi.logout();
       removeToken();

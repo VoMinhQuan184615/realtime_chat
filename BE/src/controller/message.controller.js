@@ -136,3 +136,76 @@ export const markConversationAsRead = async (req, res) => {
     );
   }
 };
+
+// Public chat endpoints
+export const sendPublicMessage = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const senderId = req.user._id;
+
+    if (!content || content.trim() === "") {
+      return ApiResponse.error(
+        res,
+        "Message content is required",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const result = await MessageService.sendPublicMessage(senderId, content);
+
+    return ApiResponse.success(
+      res,
+      result,
+      "Public message sent successfully",
+      HTTP_STATUS.CREATED
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+export const getPublicMessages = async (req, res) => {
+  try {
+    const { limit, skip } = req.query;
+
+    const result = await MessageService.getPublicMessages(
+      limit ? parseInt(limit) : 50,
+      skip ? parseInt(skip) : 0
+    );
+
+    return ApiResponse.success(
+      res,
+      result,
+      "Public messages retrieved successfully",
+      HTTP_STATUS.OK
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+export const getOnlineCount = async (req, res) => {
+  try {
+    const onlineCount = global.socketService?.getOnlineCount() || 0;
+    return ApiResponse.success(
+      res,
+      { onlineUsers: onlineCount },
+      "Online users count retrieved",
+      HTTP_STATUS.OK
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};

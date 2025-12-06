@@ -120,3 +120,21 @@ export const searchUsers = async (req, res) => {
     );
   }
 };
+
+export const getOnlineUsers = async (req, res) => {
+  try {
+    const onlineCount = global.socketService?.getOnlineCount() || 0;
+    return ApiResponse.success(
+      res,
+      { onlineUsers: onlineCount },
+      "Online users count retrieved",
+      HTTP_STATUS.OK
+    );
+  } catch (error) {
+    return ApiResponse.error(
+      res,
+      error.message || MessagesError.ERROR.INTERNAL,
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
+  }
+};

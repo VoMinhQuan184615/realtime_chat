@@ -1,12 +1,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import http from "http";
 import connectDB from "../db.js";
 import routes from "./routes/index.js";
+import { initializeSocket } from "./socket/socketHandler.js";
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const socketService = initializeSocket(
+  server,
+  process.env.CORS_ORIGIN || "http://localhost:5173"
+);
+
+// Make socketService available globally
+global.socketService = socketService;
+
 const PORT = process.env.PORT || 3000;
 
 // CORS Middleware
@@ -28,8 +39,9 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Server ready => http://localhost:${PORT}`);
+      console.log(`🔌 Socket.io ready on ws://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("❌ Cannot start server:", error.message);
