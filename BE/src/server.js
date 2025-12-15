@@ -4,9 +4,11 @@ import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
 import http from "http";
+import swaggerUi from "swagger-ui-express";
 import connectDB from "../db.js";
 import routes from "./routes/index.js";
 import { initializeSocket } from "./socket/socketHandler.js";
+import { swaggerSpec } from "./config/swagger.js";
 import { setupSocket } from "./socket/socketHandler.js";
 import MessageService from "./service/message.service.js";
 import ConversationService from "./service/conversation.service.js";
@@ -43,6 +45,9 @@ app.use(
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Sử dụng tất cả route qua index.js
 app.use("/api", routes);

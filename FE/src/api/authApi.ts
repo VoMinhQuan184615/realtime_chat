@@ -17,7 +17,6 @@ export const authApi = {
       );
       return data;
     } catch (error) {
-      console.error("❌ Login error:", error);
       const axiosError = error as AxiosError<{
         success: boolean;
         message: string;

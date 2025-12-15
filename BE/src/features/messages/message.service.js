@@ -1,7 +1,7 @@
-import Message from "../model/message.js";
-import Conversation from "../model/Conversation.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { updateConversationAfterCreateMessage } from "../utils/MessageHelper.js";
+import Message from "./message.model.js";
+import Conversation from "../conversations/conversation.model.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { updateConversationAfterCreateMessage } from "../../shared/utils/MessageHelper.js";
 
 class MessageService {
   sendDirectMessage = async (

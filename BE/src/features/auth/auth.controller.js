@@ -1,7 +1,7 @@
-import AuthService from "../service/auth.service.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
+import AuthService from "./auth.service.js";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { HTTP_STATUS } from "../../shared/constants/httpStatus.js";
 
 export const login = async (req, res) => {
   try {

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import User from "../model/Users.js";
-import { MessagesError } from "../constants/messagesError.js";
+import User from "../users/user.model.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
 
 const SECRET_KEY = process.env.SECRET_KEY || "change_this_secret";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "5m";

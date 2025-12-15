@@ -1,7 +1,7 @@
-import ApiResponse from "../utils/ApiResponse.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
-import ConversationService from "../service/conversation.service.js";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { HTTP_STATUS } from "../../shared/constants/httpStatus.js";
+import ConversationService from "./conversation.service.js";
 
 export const createConversation = async (req, res) => {
   try {

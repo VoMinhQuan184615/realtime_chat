@@ -4,8 +4,8 @@ import {
   acceptedRequestFriend,
   getPendingRequests,
   getFriends,
-} from "../../controller/friend.controller.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
+} from "./friend.controller.js";
+import { authenticate } from "../../shared/middleware/auth.middleware.js";
 
 const router = express.Router();
 router.post("/request", authenticate, sendRequestFriend);

@@ -1,4 +1,4 @@
-import FriendRequest from "../model/FriendRequest.js";
+import FriendRequest from "./friendRequest.model.js";
 
 class FriendRequestService {
   deleteRequest = async (requestId) => {

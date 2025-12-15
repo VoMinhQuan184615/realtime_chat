@@ -121,7 +121,7 @@ export default function DashBoardPage() {
                   {isLoading ? (
                     <p className="text-xs text-gray-500 py-2">
                       Loading users...
-                    </p>
+                    </p>  
                   ) : onlineUsers.length > 0 ? (
                     onlineUsers.map((user) => (
                       <div

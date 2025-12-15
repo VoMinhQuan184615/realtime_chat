@@ -1,8 +1,8 @@
-import ApiResponse from "../utils/ApiResponse.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
-import MessageService from "../service/message.service.js";
-import OnlineUsersService from "../service/onlineUsers.service.js";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { HTTP_STATUS } from "../../shared/constants/httpStatus.js";
+import MessageService from "./message.service.js";
+import OnlineUsersService from "./onlineUsers.service.js";
 
 export const sendDirectMessage = async (req, res) => {
   try {
