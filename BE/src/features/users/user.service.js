@@ -1,5 +1,5 @@
-import User from "../model/Users.js";
-import { MessagesError } from "../constants/messagesError.js";
+import User from "./user.model.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
 
 class UserService {
   // Register user
@@ -131,7 +131,6 @@ class UserService {
       }
       return user;
     } catch (error) {
-      console.log("Im here---------------");
       throw new Error(error.message || MessagesError.ERROR.INTERNAL);
     }
   }

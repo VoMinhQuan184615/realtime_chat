@@ -1,9 +1,9 @@
 import express from "express";
-import userRoutes from "./modules/user.routes.js";
-import authRoutes from "./modules/auth.routes.js";
-import friendRoutes from "./modules/friend.routes.js";
-import messageRoutes from "./modules/message.routes.js";
-import conversationRoutes from "./modules/conversation.routes.js";
+import userRoutes from "../features/users/user.routes.js";
+import authRoutes from "../features/auth/auth.routes.js";
+import friendRoutes from "../features/friends/friend.routes.js";
+import messageRoutes from "../features/messages/message.routes.js";
+import conversationRoutes from "../features/conversations/conversation.routes.js";
 
 const router = express.Router();
 

@@ -2,9 +2,11 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import http from "http";
+import swaggerUi from "swagger-ui-express";
 import connectDB from "../db.js";
 import routes from "./routes/index.js";
 import { initializeSocket } from "./socket/socketHandler.js";
+import { swaggerSpec } from "./config/swagger.js";
 
 dotenv.config();
 
@@ -31,10 +33,12 @@ app.use(
 // Middleware
 app.use(express.json());
 
+// Swagger documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Sử dụng tất cả route qua index.js
 app.use("/api", routes);
 
-// Server + DB bootstrap
 const startServer = async () => {
   try {
     await connectDB();

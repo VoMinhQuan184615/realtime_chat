@@ -19,11 +19,10 @@ class OnlineUsersService {
         .map((user) => ({
           userId: user.userId,
           username: user.username,
-          email: user.email,  
+          email: user.email,
           avatar: user.avatar,
           socketId: user.socketId,
         }));
-        
 
       return {
         onlineUsers: usersList,

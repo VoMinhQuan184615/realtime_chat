@@ -1,4 +1,4 @@
-import Friend from "../model/Friend.js";
+import Friend from "../../features/friends/friend.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 import { MessagesError } from "../constants/messagesError.js";

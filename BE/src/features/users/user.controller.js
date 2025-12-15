@@ -1,7 +1,7 @@
-import UserService from "../service/user.service.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
+import UserService from "./user.service.js";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { HTTP_STATUS } from "../../shared/constants/httpStatus.js";
 
 export const registerUser = async (req, res) => {
   try {

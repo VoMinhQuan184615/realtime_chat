@@ -1,5 +1,5 @@
-import Friend from "../model/Friend.js";
-import FriendRequest from "../model/FriendRequest.js";
+import Friend from "./friend.model.js";
+import FriendRequest from "./friendRequest.model.js";
 import FriendRequestService from "./friendRequest.service.js";
 import mongoose from "mongoose";
 

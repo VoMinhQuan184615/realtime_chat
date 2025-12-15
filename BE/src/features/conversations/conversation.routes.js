@@ -6,8 +6,8 @@ import {
   addParticipantsToGroup,
   removeParticipantFromGroup,
   updateGroupInfo,
-} from "../../controller/conversation.controller.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
+} from "./conversation.controller.js";
+import { authenticate } from "../../shared/middleware/auth.middleware.js";
 
 const router = express.Router();
 

@@ -1,8 +1,8 @@
-import ApiResponse from "../utils/ApiResponse.js";
-import { MessagesError } from "../constants/messagesError.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
-import UserService from "../service/user.service.js";
-import FriendService from "../service/friend.service.js";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
+import { HTTP_STATUS } from "../../shared/constants/httpStatus.js";
+import UserService from "../users/user.service.js";
+import FriendService from "./friend.service.js";
 
 export const sendRequestFriend = async (req, res) => {
   try {

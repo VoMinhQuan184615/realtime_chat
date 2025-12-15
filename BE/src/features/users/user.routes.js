@@ -9,8 +9,8 @@ import {
   searchUsers,
   getOnlineUsers,
   getUserProfile,
-} from "../../controller/user.controller.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
+} from "./user.controller.js";
+import { authenticate } from "../../shared/middleware/auth.middleware.js";
 
 const router = express.Router();
 

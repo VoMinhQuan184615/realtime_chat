@@ -108,7 +108,7 @@ export function PublicChat({
       console.log("📤 PublicChat Send Message Debug:", {
         tokenUser,
         currentUserId,
-        currentUsername,
+        
         userId,
         usernameToSend,
       });
@@ -178,7 +178,7 @@ export function PublicChat({
       </div>
 
       {/* INPUT */}
-      <div className="p-4 border-t">
+      <div className="p-4 bordercurrentUsername,-t">
         <div className="flex gap-2">
           <Input
             placeholder="Type something..."

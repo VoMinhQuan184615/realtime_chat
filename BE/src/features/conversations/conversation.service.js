@@ -1,6 +1,6 @@
-import Conversation from "../model/Conversation.js";
-import User from "../model/Users.js";
-import { MessagesError } from "../constants/messagesError.js";
+import Conversation from "./conversation.model.js";
+import User from "../users/user.model.js";
+import { MessagesError } from "../../shared/constants/messagesError.js";
 
 class ConversationService {
   createConversation = async ({ participantsId, type, name, createdBy }) => {
